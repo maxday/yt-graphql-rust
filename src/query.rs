@@ -1,6 +1,6 @@
-use juniper::{graphql_object, FieldResult, FieldError};
+use juniper::{graphql_object, FieldError, FieldResult};
 
-use crate::schema::{User, DatabaseContext};
+use crate::schema::{DatabaseContext, User};
 
 pub struct QueryRoot;
 
@@ -12,7 +12,10 @@ impl QueryRoot {
         let mut result = Vec::<User>::new();
         result.reserve(users.len());
         for user in users {
-            result.push(User { id: user.id, name: user.name.clone() })
+            result.push(User {
+                id: user.id,
+                name: user.name.clone(),
+            })
         }
         Ok(result)
     }
@@ -20,8 +23,11 @@ impl QueryRoot {
         let read = context.0.read().expect("could not access the database");
         let user = read.get_user_by_id(&id);
         match user {
-            Some(user) => Ok(User { id: user.id, name: user.name.clone() }),
-            None => Err(FieldError::from("could not find the user"))
+            Some(user) => Ok(User {
+                id: user.id,
+                name: user.name.clone(),
+            }),
+            None => Err(FieldError::from("could not find the user")),
         }
     }
 }
